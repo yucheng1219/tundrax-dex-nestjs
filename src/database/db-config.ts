@@ -1,4 +1,5 @@
 import { registerAs } from "@nestjs/config";
+import { Transform } from "class-transformer";
 import {
   IsBoolean,
   IsInt,
@@ -74,7 +75,16 @@ export interface DBConfig {
 }
 
 export const dbConfig = registerAs<DBConfig>("database", () => {
-  const parsed = validateConfig(process.env, VarsValidator);
+  const parsed = validateConfig(
+    {
+      ...process.env,
+      DATABASE_SYNCHRONIZE: process.env.DATABASE_SYNCHRONIZE === "true",
+      DATABASE_SSL_ENABLED: process.env.DATABASE_SSL_ENABLED === "true",
+      DATABASE_REJECT_UNAUTHORIZED:
+        process.env.DATABASE_REJECT_UNAUTHORIZED === "true",
+    },
+    VarsValidator
+  );
 
   return {
     host: parsed.DATABASE_HOST,

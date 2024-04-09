@@ -1,10 +1,18 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Exclude } from "class-transformer";
+import {
+  Column,
+  Entity,
+  Index,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Role } from "~/common/decorators/roles.decorator";
+import type { User } from "./domain/user.domain";
 
 @Entity({
   name: "user",
 })
-export class UserEntity {
+export class UserEntity implements User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -12,8 +20,10 @@ export class UserEntity {
   email: string;
 
   @Column()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
+  @Index()
   @Column()
   fullName: string;
 
