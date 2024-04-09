@@ -3,25 +3,21 @@ import {
   Injectable,
   UnauthorizedException,
   UnprocessableEntityException,
-} from "@nestjs/common";
-import { UsersService } from "~/users/users.service";
-import { bcryptCheckHash, bcryptHash } from "~/utils/bcrypt";
-import { JwtService } from "@nestjs/jwt";
-import { ConfigService } from "@nestjs/config";
-import type { AllConfigType } from "~/config/config.type";
-import ms from "ms";
-import crypto from "crypto";
-import type { Role } from "~/common/decorators/roles.decorator";
-import { randomStringGenerator } from "@nestjs/common/utils/random-string-generator.util";
-import { SessionService } from "~/session/session.service";
-import type { Session } from "~/session/domain/session";
-import type {
-  AuthEmailLoginDto,
-  AuthRegisterLoginDto,
-  AuthUpdateDto,
-} from "~/auth/dto";
-import type { JwtPayload, JwtRefreshPayload } from "~/auth/strategy/types";
-import { Not } from "typeorm";
+} from '@nestjs/common'
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util'
+import { ConfigService } from '@nestjs/config'
+import { JwtService } from '@nestjs/jwt'
+import crypto from 'crypto'
+import ms from 'ms'
+import { Not } from 'typeorm'
+import type { AuthEmailLoginDto, AuthRegisterLoginDto, AuthUpdateDto } from '~/auth/dto'
+import type { JwtPayload, JwtRefreshPayload } from '~/auth/strategy/types'
+import type { Role } from '~/common/decorators/roles.decorator'
+import type { AllConfigType } from '~/config/config.type'
+import type { Session } from '~/session/domain/session'
+import { SessionService } from '~/session/session.service'
+import { UsersService } from '~/users/users.service'
+import { bcryptCheckHash, bcryptHash } from '~/utils/bcrypt'
 
 @Injectable()
 export class AuthService {
@@ -33,33 +29,30 @@ export class AuthService {
   ) {}
 
   async login(dto: AuthEmailLoginDto) {
-    const user = await this.usersService.findByEmail(dto.email);
+    const user = await this.usersService.findByEmail(dto.email)
     if (!user) {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
         errors: {
-          email: "notFound",
+          email: 'notFound',
         },
-      });
+      })
     }
-    const isPasswordMatch = await bcryptCheckHash(dto.password, user?.password);
+    const isPasswordMatch = await bcryptCheckHash(dto.password, user?.password)
     if (!isPasswordMatch) {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
         errors: {
-          password: "incorrectPassword",
+          password: 'incorrectPassword',
         },
-      });
+      })
     }
-    const hash = crypto
-      .createHash("sha256")
-      .update(randomStringGenerator())
-      .digest("hex");
+    const hash = crypto.createHash('sha256').update(randomStringGenerator()).digest('hex')
 
     const session = await this.sessionService.create({
       user,
       hash,
-    });
+    })
 
     const { token, refreshToken, tokenExpires } = await this.generateTokens({
       id: session.user.id,
@@ -67,49 +60,46 @@ export class AuthService {
       email: session.user.email,
       sessionId: session.id,
       hash,
-    });
+    })
 
     return {
       refreshToken,
       token,
       tokenExpires,
       user,
-    };
+    }
   }
 
   async register(dto: AuthRegisterLoginDto) {
     return this.usersService.create({
       ...dto,
       password: await bcryptHash(dto.password),
-    });
+    })
   }
 
-  async refreshToken(data: Pick<JwtRefreshPayload, "sessionId" | "hash">) {
+  async refreshToken(data: Pick<JwtRefreshPayload, 'sessionId' | 'hash'>) {
     const session = await this.sessionService.findOne({
       id: Number(data.sessionId),
-    });
+    })
 
     if (!session) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException()
     }
 
     if (session.hash !== data.hash) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException()
     }
 
-    const user = await this.usersService.findOne(session.user.id);
+    const user = await this.usersService.findOne(session.user.id)
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException()
     }
 
-    const hash = crypto
-      .createHash("sha256")
-      .update(randomStringGenerator())
-      .digest("hex");
+    const hash = crypto.createHash('sha256').update(randomStringGenerator()).digest('hex')
 
     await this.sessionService.update(session.id, {
       hash,
-    });
+    })
 
     const { token, refreshToken, tokenExpires } = await this.generateTokens({
       id: session.user.id,
@@ -117,26 +107,26 @@ export class AuthService {
       email: session.user.email,
       sessionId: session.id,
       hash,
-    });
+    })
 
     return {
       token,
       refreshToken,
       tokenExpires,
-    };
+    }
   }
 
   private async generateTokens(data: {
-    id: number;
-    email: string;
-    role: Role;
-    sessionId: Session["id"];
-    hash: Session["hash"];
+    id: number
+    email: string
+    role: Role
+    sessionId: Session['id']
+    hash: Session['hash']
   }) {
-    const tokenExpiresIn = this.configService.getOrThrow("auth.expires", {
+    const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
       infer: true,
-    });
-    const tokenExpires = Date.now() + ms(tokenExpiresIn);
+    })
+    const tokenExpires = Date.now() + ms(tokenExpiresIn)
     const [token, refreshToken] = await Promise.all([
       await this.jwtService.signAsync(
         {
@@ -145,7 +135,7 @@ export class AuthService {
           sessionId: data.sessionId,
         },
         {
-          secret: this.configService.getOrThrow("auth.secret", {
+          secret: this.configService.getOrThrow('auth.secret', {
             infer: true,
           }),
           expiresIn: tokenExpires,
@@ -158,33 +148,33 @@ export class AuthService {
           hash: data.hash,
         },
         {
-          secret: this.configService.getOrThrow("auth.refreshSecret", {
+          secret: this.configService.getOrThrow('auth.refreshSecret', {
             infer: true,
           }),
           expiresIn:
             Date.now() +
             ms(
-              this.configService.getOrThrow("auth.refreshExpires", {
+              this.configService.getOrThrow('auth.refreshExpires', {
                 infer: true,
               })
             ),
           subject: data.email,
         }
       ),
-    ]);
+    ])
     return {
       token,
       refreshToken,
       tokenExpires,
-    };
+    }
   }
 
-  async logout(data: Pick<JwtRefreshPayload, "sessionId">) {
-    return this.sessionService.delete({ id: data.sessionId });
+  async logout(data: Pick<JwtRefreshPayload, 'sessionId'>) {
+    return this.sessionService.delete({ id: data.sessionId })
   }
 
   async me(userJwt: JwtPayload) {
-    return this.usersService.findOne(userJwt.id);
+    return this.usersService.findOne(userJwt.id)
   }
 
   async update(userJwt: JwtPayload, dto: AuthUpdateDto) {
@@ -193,39 +183,36 @@ export class AuthService {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            oldPassword: "missingOldPassword",
+            oldPassword: 'missingOldPassword',
           },
-        });
+        })
       }
-      const currentUser = await this.usersService.findOne(userJwt.id);
+      const currentUser = await this.usersService.findOne(userJwt.id)
       if (!currentUser) {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            user: "userNotFound",
+            user: 'userNotFound',
           },
-        });
+        })
       }
       if (!currentUser.password) {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            oldPassword: "incorrectOldPassword",
+            oldPassword: 'incorrectOldPassword',
           },
-        });
+        })
       }
 
-      const isOldPasswordValid = await bcryptCheckHash(
-        dto.oldPassword,
-        currentUser.password
-      );
+      const isOldPasswordValid = await bcryptCheckHash(dto.oldPassword, currentUser.password)
       if (!isOldPasswordValid) {
         throw new UnprocessableEntityException({
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            oldPassword: "incorrectOldPassword",
+            oldPassword: 'incorrectOldPassword',
           },
-        });
+        })
       }
       // Delete other active sessions to trigger logout
       await this.sessionService.delete({
@@ -233,9 +220,9 @@ export class AuthService {
           id: currentUser.id,
         },
         id: Not(userJwt.sessionId),
-      });
+      })
 
-      await this.usersService.update(userJwt.id, dto);
+      await this.usersService.update(userJwt.id, dto)
     }
   }
 }

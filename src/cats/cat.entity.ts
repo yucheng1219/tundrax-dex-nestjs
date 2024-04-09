@@ -1,19 +1,19 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import type { Cat } from "./domain/cat.domain";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import type { Cat } from './domain/cat.domain'
 
 @Entity({
-  name: "cat",
+  name: 'cat',
 })
 export class CatEntity implements Cat {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column()
-  name: string;
+  name: string
 
   @Column()
-  age: number;
+  age: number
 
   @Column()
-  breed: string;
+  breed: string
 }

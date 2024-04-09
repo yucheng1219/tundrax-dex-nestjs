@@ -1,8 +1,8 @@
-import { ClassSerializerInterceptor, Module } from "@nestjs/common";
-import { APP_INTERCEPTOR } from "@nestjs/core";
-import { LoggingInterceptor } from "./interceptors/logging.interceptor";
-import { TransformInterceptor } from "./interceptors/transform.interceptor";
-import { ResolvePromisesInterceptor } from "~/common/interceptors/serializer.interceptor";
+import { ClassSerializerInterceptor, Module } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
+import { ResolvePromisesInterceptor } from '~/common/interceptors/serializer.interceptor'
+import { LoggingInterceptor } from './interceptors/logging.interceptor'
+import { TransformInterceptor } from './interceptors/transform.interceptor'
 
 @Module({
   providers: [

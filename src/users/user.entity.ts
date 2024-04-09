@@ -1,32 +1,26 @@
-import { Exclude } from "class-transformer";
-import {
-  Column,
-  Entity,
-  Index,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import { Role } from "~/common/decorators/roles.decorator";
-import type { User } from "./domain/user.domain";
+import { Exclude } from 'class-transformer'
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm'
+import { Role } from '~/common/decorators/roles.decorator'
+import type { User } from './domain/user.domain'
 
 @Entity({
-  name: "user",
+  name: 'user',
 })
 export class UserEntity implements User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column()
-  email: string;
+  email: string
 
   @Column()
   @Exclude({ toPlainOnly: true })
-  password: string;
+  password: string
 
   @Index()
   @Column()
-  fullName: string;
+  fullName: string
 
   @Column()
-  role: Role;
+  role: Role
 }

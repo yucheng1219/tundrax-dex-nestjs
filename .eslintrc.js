@@ -4,7 +4,7 @@ module.exports = {
     project: 'tsconfig.json',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['@typescript-eslint', 'import'],
   extends: [
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
@@ -20,6 +20,17 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
+    'import/no-relative-parent-imports': 'error',
     "@typescript-eslint/consistent-type-imports": "error",
+    // Allow _ for no-unused-variables https://stackoverflow.com/a/64067915/8930600
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_+',
+        varsIgnorePattern: '^_+',
+        caughtErrorsIgnorePattern: '^_+',
+      },
+    ],
   },
 };

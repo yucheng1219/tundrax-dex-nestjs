@@ -1,90 +1,81 @@
-import { registerAs } from "@nestjs/config";
-import { Transform } from "class-transformer";
-import {
-  IsBoolean,
-  IsInt,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-} from "class-validator";
-import { validateConfig } from "~/utils/validate-config";
+import { registerAs } from '@nestjs/config'
+import { IsBoolean, IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
+import { validateConfig } from '~/utils/validate-config'
 
 class VarsValidator {
   @IsString()
-  DATABASE_HOST: string;
+  DATABASE_HOST: string
 
   @IsInt()
   @Min(0)
   @Max(65535)
   @IsOptional()
-  DATABASE_PORT?: number;
+  DATABASE_PORT?: number
 
   @IsString()
-  DATABASE_PASSWORD: string;
+  DATABASE_PASSWORD: string
 
   @IsString()
-  DATABASE_NAME: string;
+  DATABASE_NAME: string
 
   @IsString()
-  DATABASE_USERNAME: string;
+  DATABASE_USERNAME: string
 
   @IsBoolean()
-  DATABASE_SYNCHRONIZE: boolean;
+  DATABASE_SYNCHRONIZE: boolean
 
   @IsInt()
   @Min(0)
   @Max(100)
   @IsOptional()
-  DATABASE_MAX_CONNECTIONS?: number;
+  DATABASE_MAX_CONNECTIONS?: number
 
   @IsBoolean()
   @IsOptional()
-  DATABASE_SSL_ENABLED: boolean;
+  DATABASE_SSL_ENABLED: boolean
 
   @IsBoolean()
   @IsOptional()
-  DATABASE_REJECT_UNAUTHORIZED: boolean;
+  DATABASE_REJECT_UNAUTHORIZED: boolean
 
   @IsString()
   @IsOptional()
-  DATABASE_CA?: string;
+  DATABASE_CA?: string
 
   @IsString()
   @IsOptional()
-  DATABASE_KEY?: string;
+  DATABASE_KEY?: string
 
   @IsString()
   @IsOptional()
-  DATABASE_CERT?: string;
+  DATABASE_CERT?: string
 }
 
 export interface DBConfig {
-  host: string;
-  port: number;
-  username: string;
-  password: string;
-  name: string;
-  synchronize: boolean;
-  maxConnections: number;
-  sslEnabled?: boolean;
-  rejectUnauthorized?: boolean;
-  ca?: string;
-  key?: string;
-  cert?: string;
+  host: string
+  port: number
+  username: string
+  password: string
+  name: string
+  synchronize: boolean
+  maxConnections: number
+  sslEnabled?: boolean
+  rejectUnauthorized?: boolean
+  ca?: string
+  key?: string
+  cert?: string
 }
 
-export const dbConfig = registerAs<DBConfig>("database", () => {
+export const dbConfig = registerAs<DBConfig>('database', () => {
   const parsed = validateConfig(
     {
       ...process.env,
-      DATABASE_SYNCHRONIZE: process.env.DATABASE_SYNCHRONIZE === "true",
-      DATABASE_SSL_ENABLED: process.env.DATABASE_SSL_ENABLED === "true",
-      DATABASE_REJECT_UNAUTHORIZED:
-        process.env.DATABASE_REJECT_UNAUTHORIZED === "true",
+      DATABASE_SYNCHRONIZE: process.env.DATABASE_SYNCHRONIZE === 'true',
+      DATABASE_SSL_ENABLED: process.env.DATABASE_SSL_ENABLED === 'true',
+      DATABASE_REJECT_UNAUTHORIZED: process.env.DATABASE_REJECT_UNAUTHORIZED === 'true',
     },
     VarsValidator
-  );
+  )
 
   return {
     host: parsed.DATABASE_HOST,
@@ -99,5 +90,5 @@ export const dbConfig = registerAs<DBConfig>("database", () => {
     ca: parsed.DATABASE_CA,
     key: parsed.DATABASE_KEY,
     cert: parsed.DATABASE_CERT,
-  };
-});
+  }
+})

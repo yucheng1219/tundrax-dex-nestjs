@@ -1,30 +1,23 @@
-import {
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MinLength,
-} from "class-validator";
-import { Role } from "~/common/decorators/roles.decorator";
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator'
+import { Role } from '~/common/decorators/roles.decorator'
 
 export class UpdateUserDto {
   @IsEmail()
   @IsOptional()
-  email?: string;
+  email?: string
 
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  fullName?: string;
+  fullName?: string
 
   @IsString()
   @MinLength(8)
   @IsOptional()
-  password?: string;
+  password?: string
 
   @IsString()
   @IsEnum(Role)
   @IsOptional()
-  role?: Role;
+  role?: Role
 }
