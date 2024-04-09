@@ -7,7 +7,7 @@ import {
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import crypto from 'crypto'
+import * as crypto from 'crypto'
 import ms from 'ms'
 import { Not } from 'typeorm'
 import type { AuthEmailLoginDto, AuthRegisterLoginDto, AuthUpdateDto } from '~/auth/dto'
@@ -17,7 +17,7 @@ import type { AllConfigType } from '~/config/config.type'
 import type { Session } from '~/session/domain/session'
 import { SessionService } from '~/session/session.service'
 import { UsersService } from '~/users/users.service'
-import { bcryptCheckHash, bcryptHash } from '~/utils/bcrypt'
+import { bcryptCheckHash } from '~/utils/bcrypt'
 
 @Injectable()
 export class AuthService {
@@ -73,7 +73,6 @@ export class AuthService {
   async register(dto: AuthRegisterLoginDto) {
     return this.usersService.create({
       ...dto,
-      password: await bcryptHash(dto.password),
     })
   }
 

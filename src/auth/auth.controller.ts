@@ -1,7 +1,8 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { AuthEmailLoginDto, AuthRegisterLoginDto } from '~/auth/dto'
 import type { JwtPayload, JwtRefreshPayload } from '~/auth/strategy/types'
+import type { User } from '~/users/domain/user.domain'
 import { AuthService } from './auth.service'
 import type { LoginResponseType } from './types'
 
@@ -27,6 +28,13 @@ export class AuthController {
     await this.authService.logout({
       sessionId: request.user.sessionId,
     })
+  }
+
+  @Get('me')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  public me(@Req() request: { user: JwtPayload }): Promise<User | null> {
+    return this.authService.me(request.user)
   }
 
   @Post('refresh')

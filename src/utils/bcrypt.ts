@@ -1,12 +1,11 @@
-import bcrypt from 'bcryptjs'
+import { compare, hash } from 'bcrypt'
 
 /**
  * @param password
  * @returns
  */
 export async function bcryptHash(password: string): Promise<string> {
-  const salt = await bcrypt.genSalt()
-  const result = bcrypt.hash(password, salt)
+  const result = await hash(password, 12)
   return result
 }
 
@@ -23,5 +22,5 @@ export function bcryptCheckHash(
   if (!password || !hash) {
     return Promise.resolve(false)
   }
-  return bcrypt.compare(password, hash)
+  return compare(password, hash)
 }

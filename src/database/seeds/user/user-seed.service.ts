@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import bcrypt from 'bcryptjs'
 import { Repository } from 'typeorm'
 import { Role } from '~/common/decorators/roles.decorator'
 import { UserEntity } from '~/users/user.entity'
@@ -21,8 +20,7 @@ export class UserSeedService {
     })
 
     if (!countAdmin) {
-      const salt = await bcrypt.genSalt()
-      const password = await bcrypt.hash('admin-secret', salt)
+      const password = await bcryptHash('admin-secret')
 
       await this.repository.save(
         this.repository.create({
