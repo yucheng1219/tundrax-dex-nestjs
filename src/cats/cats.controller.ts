@@ -1,20 +1,33 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { Roles } from '../common/decorators/roles.decorator';
-import { RolesGuard } from '../common/guards/roles.guard';
-import { ParseIntPipe } from '../common/pipes/parse-int.pipe';
-import { CatsService } from './cats.service';
-import { CreateCatDto } from './dto/create-cat.dto';
-import { Cat } from './interfaces/cat.interface';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  Put,
+  HttpCode,
+  HttpStatus,
+  Delete,
+} from "@nestjs/common";
+import { Role, Roles } from "~/common/decorators/roles.decorator";
+import { RolesGuard } from "~/common/guards/roles.guard";
+import { ParseIntPipe } from "~/common/pipes/parse-int.pipe";
+import { CatsService } from "./cats.service";
+import { CreateCatDto, UpdateCatDto } from "./dto";
+import type { Cat } from "./interfaces/cat.interface";
+import { AuthGuard } from "@nestjs/passport";
 
-@UseGuards(RolesGuard)
-@Controller('cats')
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Controller("cats")
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
   @Post()
-  @Roles(['admin'])
+  @Roles(Role.Admin)
+  @HttpCode(HttpStatus.CREATED)
   async create(@Body() createCatDto: CreateCatDto) {
-    this.catsService.create(createCatDto);
+    return this.catsService.create(createCatDto);
   }
 
   @Get()
@@ -22,11 +35,29 @@ export class CatsController {
     return this.catsService.findAll();
   }
 
-  @Get(':id')
-  findOne(
-    @Param('id', new ParseIntPipe())
-    id: number,
+  @Get(":id")
+  async findOne(
+    @Param("id", new ParseIntPipe())
+    id: number
   ) {
-    // get by ID logic
+    return this.catsService.findOne(id);
+  }
+
+  @Put(":id")
+  async updateOne(
+    @Param("id", new ParseIntPipe())
+    id: number,
+    @Body() updateCatDto: UpdateCatDto
+  ) {
+    return this.catsService.update(id, updateCatDto);
+  }
+
+  @Delete(":id")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteOne(
+    @Param("id", new ParseIntPipe())
+    id: number
+  ) {
+    return this.catsService.deleteOne(id);
   }
 }
