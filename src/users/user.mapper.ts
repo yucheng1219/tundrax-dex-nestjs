@@ -9,6 +9,7 @@ export class UserMapper {
     // This is safe because it's excluded before serialization
     user.password = entity.password
     user.fullName = entity.fullName
+    user.role = entity.role
     return user
   }
 

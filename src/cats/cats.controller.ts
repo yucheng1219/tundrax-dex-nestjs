@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpException,
   HttpStatus,
   Param,
   Post,
@@ -40,7 +41,11 @@ export class CatsController {
     @Param('id', new ParseIntPipe())
     id: number
   ) {
-    return this.catsService.findOne(id)
+    const result = await this.catsService.findOne(id)
+    if (!result) {
+      throw new HttpException('notFound', HttpStatus.NOT_FOUND)
+    }
+    return result
   }
 
   @Put(':id')
