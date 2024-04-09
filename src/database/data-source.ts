@@ -1,8 +1,8 @@
 import 'reflect-metadata'
-import type { DataSourceOptions } from 'typeorm'
 import { DataSource } from 'typeorm'
+import type { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
 
-export const AppDataSource = new DataSource({
+export const getDataSourceOptions = (): PostgresConnectionOptions => ({
   type: 'postgres',
   url: process.env.DATABASE_URL,
   host: process.env.DATABASE_HOST,
@@ -12,15 +12,9 @@ export const AppDataSource = new DataSource({
   database: process.env.DATABASE_NAME,
   synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
   dropSchema: false,
-  keepConnectionAlive: true,
   logging: process.env.NODE_ENV !== 'production',
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-  cli: {
-    entitiesDir: 'src',
-
-    subscribersDir: 'subscriber',
-  },
   extra: {
     // based on https://node-postgres.com/api/pool
     // max connection pool size
@@ -37,4 +31,6 @@ export const AppDataSource = new DataSource({
           }
         : undefined,
   },
-} as DataSourceOptions)
+})
+
+export const AppDataSource = new DataSource(getDataSourceOptions())

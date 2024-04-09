@@ -1,9 +1,10 @@
 import type { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import * as request from 'supertest'
-import { CatsModule } from '../../src/cats/cats.module'
-import { CatsService } from '../../src/cats/cats.service'
-import { CoreModule } from '../../src/core/core.module'
+import { mkTestDataSource } from 'e2e/mk-test-data-source'
+import { mkTestModule } from 'e2e/mk-test-module'
+import request from 'supertest'
+import type { DataSource } from 'typeorm'
+import { CatsModule } from '~/cats/cats.module'
+import { CatsService } from '~/cats/cats.service'
 
 describe('Cats', () => {
   const catsService = { findAll: () => ['test'] }
@@ -11,9 +12,7 @@ describe('Cats', () => {
   let app: INestApplication
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [CatsModule, CoreModule],
-    })
+    const moduleRef = await mkTestModule([CatsModule])
       .overrideProvider(CatsService)
       .useValue(catsService)
       .compile()

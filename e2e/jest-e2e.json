@@ -12,6 +12,10 @@
     "collectCoverageFrom" : ["src/**/*.{js,jsx,tsx,ts}", "!**/node_modules/**", "!**/vendor/**"],
     "coverageReporters": ["json", "lcov"],
     "moduleNameMapper": {
-        "^@/(.*)$": "../src/$1"
-    }
+        "^~/(.*)$": "<rootDir>/../src/$1",
+        "^e2e/(.*)$": "<rootDir>/../e2e/$1"
+    },
+    "globalSetup": "./setup.ts",
+    "globalTeardown": "./teardown.ts",
+    "openHandlesTimeout": 10000
 }
