@@ -12,6 +12,7 @@
     "collectCoverageFrom" : ["src/**/*.{js,jsx,tsx,ts}", "!**/node_modules/**", "!**/vendor/**"],
     "coverageReporters": ["json", "lcov"],
     "moduleNameMapper": {
-        "^@/(.*)$": "<rootDir>/src/$1"
+        "^~/(.*)$": "<rootDir>/src/$1",
+        "^e2e/(.*)$": "<rootDir>/e2e/$1"
     }
 }

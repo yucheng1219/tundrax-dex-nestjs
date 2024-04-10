@@ -1,7 +1,19 @@
 
 ## Description
+NestJS API Development Assignment
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+
+## Technical Stack
+
+- NestJS
+- PostgreSQL + TypeORM
+- JWT, Passport
+- NestJS ConfigurationService
+- NestJS ValidationPipe using `class-validator` and `class-transformer`
+- Docker for DB server
+- Repository Pattern for persistence
+- Role based endpoint protection
+
 
 ## Installation
 
@@ -9,32 +21,49 @@
 $ npm install
 ```
 
-## Running the app
+## Getting Started
 
+### Install packages
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+$ npm install
 ```
 
-## Test
+### Environment Setup
+
+- Copy `.env.example` as `.env` file
+
+- Update the `DATABASE_HOST` in `.env` file to `localhost`.
+
+  This is necessary to run dev server locally.
+
+### Run the servers
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+$npm run docker:dev:up
 ```
 
-## Support
+This command runs PostgreSQL database server and adminer(a tiny database administration app) containers.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+The `docker-compose.yaml` file has the setup for api container also, so we just run only these two services.
+
+
+### Run migration and seed initial users
+
+```bash
+$npm run migration:run
+$npm run seed:run
+```
+
+These command will migrate the current database, and seed the initial users (currently one admin user and one normal user).
+
+### Start the dev server
+
+```bash
+$npm run start:dev
+```
+
+
+## TBD
+
+- Complete the unit tests
+- Add more content to `README.md`
