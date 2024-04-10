@@ -63,7 +63,14 @@ $npm run start:dev
 ```
 
 
+### Testing
+```bash
+$npm run test:e2e
+```
+
+This command will do e2e tests for auth and cat modules
+
 ## TBD
 
-- Complete the unit tests
+- Add unit tests
 - Add more content to `README.md`

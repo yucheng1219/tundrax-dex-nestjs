@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import type { FindOptionsWhere } from 'typeorm'
 import { Repository } from 'typeorm'
-import { SessionMapper } from '~/session/session.mapper'
 import type { Session } from './domain/session'
 import { SessionEntity } from './session.entity'
+import { SessionMapper } from './session.mapper'
 
 @Injectable()
 export class SessionService {
