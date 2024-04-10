@@ -7,7 +7,8 @@ export class AuthRegisterLoginDto {
   @IsEmail()
   email: string
 
-  @MinLength(8)
+  @IsString()
+  @MinLength(6)
   password: string
 
   @IsString()

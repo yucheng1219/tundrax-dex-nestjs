@@ -31,21 +31,11 @@ export class AuthService {
   async login(dto: AuthEmailLoginDto) {
     const user = await this.usersService.findByEmail(dto.email)
     if (!user) {
-      throw new UnprocessableEntityException({
-        status: HttpStatus.UNPROCESSABLE_ENTITY,
-        errors: {
-          email: 'notFound',
-        },
-      })
+      throw new UnauthorizedException()
     }
     const isPasswordMatch = await bcryptCheckHash(dto.password, user?.password)
     if (!isPasswordMatch) {
-      throw new UnprocessableEntityException({
-        status: HttpStatus.UNPROCESSABLE_ENTITY,
-        errors: {
-          password: 'incorrectPassword',
-        },
-      })
+      throw new UnauthorizedException()
     }
     const hash = crypto.createHash('sha256').update(randomStringGenerator()).digest('hex')
 

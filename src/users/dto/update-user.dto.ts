@@ -12,7 +12,7 @@ export class UpdateUserDto {
   fullName?: string
 
   @IsString()
-  @MinLength(8)
+  @MinLength(6)
   @IsOptional()
   password?: string
 

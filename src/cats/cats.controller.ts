@@ -49,6 +49,7 @@ export class CatsController {
   }
 
   @Put(':id')
+  @Roles(Role.Admin)
   async updateOne(
     @Param('id', new ParseIntPipe())
     id: number,
@@ -58,6 +59,7 @@ export class CatsController {
   }
 
   @Delete(':id')
+  @Roles(Role.Admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteOne(
     @Param('id', new ParseIntPipe())

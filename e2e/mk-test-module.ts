@@ -6,6 +6,7 @@ import { AuthModule } from '~/auth/auth.module'
 import { authConfig } from '~/auth/config/auth.config'
 import { appConfig } from '~/config/app.config'
 import { CoreModule } from '~/core/core.module'
+import { UserSeedModule } from '~/database/seeds/user/user-seed.module'
 import { mkTestDBOptions } from './mk-test-data-source'
 
 export const mkTestModule = (imports: Required<ModuleMetadata>['imports']) => {
@@ -22,6 +23,7 @@ export const mkTestModule = (imports: Required<ModuleMetadata>['imports']) => {
       AuthModule,
       ...imports,
       CoreModule,
+      UserSeedModule,
     ],
   })
   return result

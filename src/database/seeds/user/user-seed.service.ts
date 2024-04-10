@@ -2,8 +2,23 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Role } from '~/common/decorators/roles.decorator'
+import type { User } from '~/users/domain/user.domain'
 import { UserEntity } from '~/users/user.entity'
 import { bcryptHash } from '~/utils/bcrypt'
+
+export const adminSeedUser: Omit<User, 'id'> = {
+  fullName: 'SuperAdmin',
+  email: 'admin@example.com',
+  password: 'admin-secret',
+  role: Role.Admin,
+}
+
+export const normalSeedUser: Omit<User, 'id'> = {
+  fullName: 'John Doe',
+  email: 'john.doe@example.com',
+  password: 'secret',
+  role: Role.User,
+}
 
 @Injectable()
 export class UserSeedService {
@@ -20,16 +35,8 @@ export class UserSeedService {
     })
 
     if (!countAdmin) {
-      const password = await bcryptHash('admin-secret')
-
-      await this.repository.save(
-        this.repository.create({
-          fullName: 'SuperAdmin',
-          email: 'admin@example.com',
-          password,
-          role: Role.Admin,
-        })
-      )
+      const password = await bcryptHash(adminSeedUser.password)
+      await this.repository.save(this.repository.create({ ...adminSeedUser, password }))
     }
 
     const countUser = await this.repository.count({
@@ -39,15 +46,8 @@ export class UserSeedService {
     })
 
     if (!countUser) {
-      const password = await bcryptHash('secret')
-      await this.repository.save(
-        this.repository.create({
-          fullName: 'John Doe',
-          email: 'john.doe@example.com',
-          password,
-          role: Role.User,
-        })
-      )
+      const password = await bcryptHash(normalSeedUser.password)
+      await this.repository.save(this.repository.create({ ...normalSeedUser, password }))
     }
   }
 }

@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer'
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator'
 import { lowerCaseTransformer } from '~/utils/transformers'
 
 export class CreateUserDto {
@@ -11,6 +11,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   fullName: string
 
-  @MinLength(8)
+  @IsString()
+  @MinLength(6)
   password: string
 }
